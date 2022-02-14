@@ -6,7 +6,7 @@
              <h1>Find a Trainer</h1>
             <ul>
                <li>
-                   <router-link to="/trainers">All Trainers</router-link>
+                   <router-link to="/coaches">All Trainers</router-link>
                </li>
                 <li>
                     <router-link to="/requests">Requests</router-link>
