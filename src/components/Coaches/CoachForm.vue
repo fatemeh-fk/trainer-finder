@@ -2,43 +2,48 @@
     <form @submit.prevent="submitForm">
      
 
-     <div class="form-control">
+     <div class="form-control" :class="{invalid :!firstName.isValid}">
          <label for="firstname">Firstname</label>
-         <input type="text" id="firstname" v-model.trim="firstName"/>
+         <input type="text" id="firstname" v-model.trim="firstName.val" @blur="clearValidity('firstName')"/>
+         <p v-if="!firstName.isValid">firstname must no be empty</p>
      </div>
      
-      <div class="form-control">
+      <div class="form-control" :class="{invalid :!lastName.isValid}">
          <label for="lastname">Lastname</label>
-         <input type="text" id="lastname" v-model.trim="lastName"/>
+         <input type="text" id="lastname" v-model.trim="lastName.val" @blur="clearValidity('lastName')"/>
+         <p v-if="!lastName.isValid">lastName must no be empty</p>
      </div>
 
-      <div class="form-control">
+      <div class="form-control" :class="{invalid :!description.isValid}">
          <label for="description">Description</label>
-         <input type="text" id="description" v-model.trim="description" rows="5"/>
+         <input type="text" id="description" v-model.trim="description.val" rows="5" @blur="clearValidity('description')"/>
+         <p v-if="!description.isValid">description must no be empty</p>
      </div>
-      <div class="form-control">
+      <div class="form-control"  :class="{invalid :!rate.isValid}">
          <label for="rate">Hourly Rate</label>
-         <input type="number" v-model.number="rate"  id="rate"/>
+         <input type="number" v-model.number="rate.val"  id="rate" @blur="clearValidity('rate')"/>
+         <p v-if="!rate.isValid">rate must be greater than 0</p>
      </div>
-      <div class="form-control">
+      <div class="form-control" :class="{invalid :!areas.isValid}">
          <h3>Areas of EXPERTIES</h3>
          <div>
-       <input type="checkbox" id="zumba" v-model="areas" value="zumba" >
+       <input type="checkbox" id="zumba" v-model="areas.val" value="zumba" @blur="clearValidity('areas')" >
        <label for="zumba">Zumba</label>
 
          </div>
           <div>
-       <input type="checkbox" id="soccer" v-model="areas" value="soccer" >
+       <input type="checkbox" id="soccer" v-model="areas.val" value="soccer" @blur="clearValidity('areas')" >
        <label for="soccer">Soccer</label>
 
          </div>
           <div>
-       <input type="checkbox" id="fitness" v-model="areas" value="fitness" >
+       <input type="checkbox" id="fitness" v-model="areas.val" value="fitness" @blur="clearValidity('areas')" >
        <label for="fitness">Fitness</label>
 
          </div>
+         <p v-if="!areas.isValid">at least one EXPERTIES must be selected</p>
      </div>
-
+    <p v-if="!formIsValid">please fix the above erros and submit again</p>
      <base-button>Register</base-button>
     </form>
 </template>
@@ -52,23 +57,70 @@ export default {
 
         return{
 
-            firstName:'',
-            lastName:'',
-            description:'',
-            rate:null,
-            areas:[]
+            firstName:{
+                val:'',
+                isValid:true
+            },
+            lastName:{
+                val:'',
+                isValid:true
+            },
+            description:{
+                val:'',
+                isValid:true
+            },
+            rate:{
+                val:null,
+                isValid:true
+            },
+            areas:{
+                val:[],
+                isValid:true
+            },
+            formIsValid:true,
         };
     },
     methods:{
+        clearValidity(input){
+            this[input].isValid=true
+        },
+        validateForm(){
+            this.formIsValid=true;
+            if (this.firstName.val === ""){
+                this.firstName.isValid= false;
+                this.formIsValid=false;
+            }
+             if (this.lastName.val === ""){
+                this.lastName.isValid= false;
+                this.formIsValid=false;
+            }
+             if (this.description.val === ""){
+                this.description.isValid= false;
+                this.formIsValid=false;
+            }
+             if (!this.rate.val  || this.rate.val<0){
+                this.rate.isValid= false;
+                this.formIsValid=false;
+            }
+             if (this.areas.val.length === 0){
+                this.areas.isValid= false;
+                this.formIsValid=false;
+            }
+
+        },
         submitForm(){
-      
+              this.validateForm();
+
+            if(!this.formIsValid){
+                return;
+            }
             const formData={
 
-                first: this.firstName,
-                last : this.lastName,
-                desc:this.description,
-                rate:this.rate,
-                areas:this.areas
+                first: this.firstName.val,
+                last : this.lastName.val,
+                desc:this.description.val,
+                rate:this.rate.val,
+                areas:this.areas.val
             };
             this.$emit('save-data',formData)
         }
