@@ -28,7 +28,12 @@
       
       })
     },
-    async loadCoaches(context){
+    async loadCoaches(context,payload){
+
+      if(!payload.forceRefresh && !context.getters.shouldUpdate){
+       return;
+      }
+      //change json you can see the button register a trainer
     const response=await fetch(`https://findyourtrainer-935e3-default-rtdb.firebaseio.com/coaches.json`);
     const responseData = await response.json();
 
@@ -49,6 +54,7 @@ throw error;
          };
          coaches.push(coach)
       }
-      context.commit('setCoaches', coaches)
+      context.commit('setCoaches', coaches);
+      context.commit('setFetchTimestamp');
   }
  };

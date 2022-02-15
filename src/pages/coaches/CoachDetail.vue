@@ -1,5 +1,7 @@
 <template>
-    <section>
+    
+    <div>
+        <section>
 
         <base-card>
         <h2>{{fullName}}</h2>
@@ -23,6 +25,7 @@
         <p>{{selectedCoach.description}}</p>
          </base-card>
     </section>
+    </div>   
 </template>
 
 
