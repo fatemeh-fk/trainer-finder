@@ -1,6 +1,8 @@
 <template>
       
-
+<base-dialog :show ="!!error" title="An error occured">
+<P>{{error}}</P>
+</base-dialog>
       <section>
         <coach-filter @change-filter="setFilters"></coach-filter>
       </section>
@@ -9,9 +11,12 @@
 
           <base-card>
           <div class="controls">
-              <base-button mode="outline">Refresh</base-button>
+              <base-button mode="outline" @click="loadCoaches"> Refresh</base-button>
             
-              <base-button v-if="!isCoach" link to="/register">Register as Trainer</base-button>
+              <base-button v-if="!isCoach &&!isLoading" link to="/register">Register as Trainer</base-button>
+          </div>
+          <div v-if="isLoading">
+           <base-spinner></base-spinner>
           </div>
           <ul v-if="hasCoaches"> 
               <coach-item v-for="coach in filteredCoaches" 
@@ -38,12 +43,15 @@ import CoachItem from '../../components/Coaches/CoachItem.vue';
 //import BaseButton from '../../components/UI/BaseButton.vue';
 
 import CoachFilter from '../../components/Coaches/CoachFilter.vue';
+import BaseDialog from '../../components/UI/BaseDialog.vue';
 export default{
  // components: { CoachItem, BaseButton ,CoachFilter},
- components: { CoachItem,CoachFilter},
+ components: { CoachItem,CoachFilter, BaseDialog},
 data(){
 return{
-  activeFilters:{
+            isLoading :false,
+            error :null,
+             activeFilters:{
                soccer :true,
                 zumba :true,
                 fitness:true,
@@ -73,12 +81,24 @@ return{
            });
         },
         hasCoaches(){
-            return this.$store.getters['coaches/hasCoaches'];
+            return !this.isLoading && this.$store.getters['coaches/hasCoaches'];
         },
+    },
+    created(){
+     this.loadCoaches();
     },
     methods:{
       setFilters(updatedFilters){
 this.activeFilters=updatedFilters
+      }, 
+      async loadCoaches(){
+        this.isLoading=true;
+        try{
+        await this.$store.dispatch('coaches/loadCoaches');
+        }catch(error){ 
+           this.error = error.message || "something went wrong!"
+        }
+        this.isLoading =false
       }
 
     }

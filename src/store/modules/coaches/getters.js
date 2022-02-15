@@ -10,6 +10,6 @@ export default {
     isCoach(_,getters,_2,rootGatter){
         const coaches=getters.coaches;
         const userId=rootGatter.userId;
-        return coaches.some(coach => coach.id ===userId)
+        return coaches.some(coach => coach.id === userId)
     }
 };
