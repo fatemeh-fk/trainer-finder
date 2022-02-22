@@ -57,6 +57,7 @@ data(){
         try {
         await this.$store.dispatch('requests/fetchRequests');
         } catch (error) {
+          console.log("here",error)
           this.error = error.message || 'something falied';
         }
        this.isLoading=false;
